@@ -1,0 +1,6 @@
+version: "3.7"
+services:
+  micro820test:
+    build:
+      context: "."
+      dockerfile: Dockerfile
