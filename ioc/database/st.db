@@ -1,0 +1,8 @@
+record(bi, $(PLC):"TEST") {
+    field(DESC, "PLC Test record")
+    field(SCAN, "I/O Intr")
+    field(DTYP, "EtherIP")
+    field(INP,  "@$(PLC) BOOL")
+    field(ZNAM, "False")
+    field(ONAM, "True")
+}
