@@ -1,8 +1,8 @@
-record(bi, $(PLC):"TEST") {
+record(bi, "$(PLC):TEST") {
     field(DESC, "PLC Test record")
-    field(SCAN, "I/O Intr")
+    field(SCAN, "1 second")
     field(DTYP, "EtherIP")
-    field(INP,  "@$(PLC) BOOL")
+    field(INP,  "@$(PLC) Memoria_teste")
     field(ZNAM, "False")
     field(ONAM, "True")
 }

@@ -13,6 +13,11 @@ ENV PATH ${EPICS_BASE}/bin/${EPICS_HOST_ARCH}:${PATH}
 
 ENV EPICS_CA_AUTO_ADDR_LIST YES
 ENV EPICS_CA_ADDR_LIST=10.0.38.59
+ENV EPICS_IOC_CAPUTLOG_INET 0.0.0.0
+ENV EPICS_IOC_CAPUTLOG_PORT 7012
+ENV EPICS_IOC_LOG_INET 0.0.0.0
+ENV EPICS_IOC_LOG_PORT 7011
+
 
 ARG EPICS_BASE_URL=https://github.com/epics-base/epics-base/archive/${EPICS_VERSION}.tar.gz
 LABEL br.cnpem.epics-base=${EPICS_BASE_URL}
@@ -38,7 +43,9 @@ RUN cd ${EPICS_MODULES} && \
     make -j$(nproc)
 
 COPY ./ioc /opt/ioc
-RUN sed -i 's/\r$//' /opt/ioc/iocBoot/st.cmd
+
+RUN sed -i 's/\r$//' /opt/ioc/iocBoot/st.cmd \ 
+    chmod +x st.cmd
 
 WORKDIR /opt
 

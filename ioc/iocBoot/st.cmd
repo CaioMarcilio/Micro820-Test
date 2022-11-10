@@ -13,7 +13,7 @@ eipIoc_registerRecordDeviceDriver(pdbbase)
 EIP_buffer_limit(450)
 drvEtherIP_init()
 EIP_verbosity(7)
-drvEtherIP_define_PLC("Micro820", "10.20.35.231", 0)
+drvEtherIP_define_PLC("Micro820", "10.0.28.82", 0)
 
 cd "${IOC}"
 dbLoadRecords("database/st.db", "PLC=Micro820")
