@@ -1,8 +1,0 @@
-record(bi, "$(PLC):TEST") {
-    field(DESC, "PLC Test record")
-    field(SCAN, "1 second")
-    field(DTYP, "EtherIP")
-    field(INP,  "@$(PLC) Memoria_teste")
-    field(ZNAM, "False")
-    field(ONAM, "True")
-}

@@ -1,52 +1,60 @@
-FROM ubuntu:20.04
+FROM debian:stretch-slim
 
-# Install necessary modules
-RUN apt-get -y update && apt-get -y upgrade; \
-apt-get -y install build-essential wget nano git;
+# Install Essential Debian Modules
+RUN set -ex; \
+    apt-get update &&\
+    apt-get install -y make build-essential &&\
+    apt-get install -y --fix-missing --no-install-recommends \
+        tzdata \
+        wget \
+        nano \
+        && rm -rf /var/lib/apt/lists/*  && \
+    dpkg-reconfigure --frontend noninteractive tzdata
 
-# --- EPICS BASE ---
-ENV EPICS_VERSION R3.15.9
-ENV EPICS_HOST_ARCH linux-x86_64
-ENV EPICS_BASE /opt/epics-${EPICS_VERSION}/base
-ENV EPICS_MODULES /opt/epics-${EPICS_VERSION}/modules
-ENV PATH ${EPICS_BASE}/bin/${EPICS_HOST_ARCH}:${PATH}
-
+# EPICS Environment Variables
 ENV EPICS_CA_AUTO_ADDR_LIST YES
-ENV EPICS_CA_ADDR_LIST=10.0.38.59
 ENV EPICS_IOC_CAPUTLOG_INET 0.0.0.0
 ENV EPICS_IOC_CAPUTLOG_PORT 7012
 ENV EPICS_IOC_LOG_INET 0.0.0.0
 ENV EPICS_IOC_LOG_PORT 7011
+ENV EPICS_BASE=/opt/epics-R3.15.9/base
+ENV EPICS_MODULES=/opt/epics-R3.15.9/modules
+ENV ASYN=${EPICS_MODULES}/asyn4-35
 
-
-ARG EPICS_BASE_URL=https://github.com/epics-base/epics-base/archive/${EPICS_VERSION}.tar.gz
-LABEL br.cnpem.epics-base=${EPICS_BASE_URL}
-RUN set -ex; \
-    mkdir -p ${EPICS_MODULES}; \
-    wget -O /opt/epics-R3.15.9/base-3.15.9.tar.gz ${EPICS_BASE_URL}; \
-    cd /opt/epics-${EPICS_VERSION}; \
-    tar -xzf base-3.15.9.tar.gz; \
-    rm base-3.15.9.tar.gz; \
-    mv epics-base-R3.15.9 base; \
-    cd base; \
-    make -j$(nproc)
-
-# --- ETHERIP MODULE ---
-ARG ETHERIP_URL=https://github.com/EPICSTools/ether_ip/archive/ether_ip-3-3.tar.gz
-ENV ETHER_IP ${EPICS_MODULES}/ether_ip-ether_ip-3-3
-RUN cd ${EPICS_MODULES} && \
-    wget ${ETHERIP_URL} && \
-    tar -zxvf ether_ip-3-3.tar.gz && \
-    rm -f ether_ip-3-3.tar.gz && \
-    cd ether_ip-ether_ip-3-3 && \
-    sed -i -e '1iEPICS_BASE='${EPICS_BASE} configure/RELEASE && \
-    make -j$(nproc)
-
-COPY ./ioc /opt/ioc
-
-RUN sed -i 's/\r$//' /opt/ioc/iocBoot/st.cmd \ 
-    chmod +x st.cmd
-
+# --- EPICS Base ---
 WORKDIR /opt
+RUN apt-get update && apt-get -y install build-essential libreadline-gplv2-dev && \
+    mkdir /opt/epics-R3.15.9 && \
+    cd /opt/epics-R3.15.9 && \
+    wget --no-check-certificate https://epics-controls.org/download/base/base-3.15.6.tar.gz && \
+    tar -xzvf base-3.15.9.tar.gz && \
+    rm -rf base-3.15.9.tar.gz && \
+    mv base-3.15.6 base && \
+    mkdir modules && \
+    cd base && \
+    make -j$(nproc)
 
-ENTRYPOINT [ "/bin/bash", "-c", "sleep infinity"]
+# --- ASYN Driver ---
+RUN cd ../modules/ && \
+    wget --no-check-certificate https://www.aps.anl.gov/epics/download/modules/asyn4-35.tar.gz && \
+    tar -xvzf asyn4-35.tar.gz && \
+    rm -rf asyn4-35.tar.gz && \
+    sed -i -e '3,4s/^/#/' -e '8,11s/^/#/' -e '14cEPICS_BASE='${EPICS_BASE} asyn4-35/configure/RELEASE && \
+    cd asyn4-35 && \
+    make -j$(nproc)
+
+# --- Stream Device ---
+RUN cd .. && \
+    wget --no-check-certificate https://github.com/paulscherrerinstitute/StreamDevice/archive/2.8.16.tar.gz && \
+    tar -zxvf 2.8.16.tar.gz && \
+    rm -rf 2.8.16.tar.gz && \
+    cd StreamDevice-2.8.16 && \
+    sed -i -e '11,18s/^/#/' -e '21,22s/^/#/' -e '29,31s/^/#/' -e '20cASYN='${ASYN} -e '25cEPICS_BASE='${EPICS_BASE} configure/RELEASE && cat configure/RELEASE && \
+    make -j$(nproc)
+
+COPY ./ioc/ /root/ioc-micro820/
+COPY ./entrypoint.sh /root/ioc-micro820/iocBoot/
+
+WORKDIR /root/ioc-micro820/iocBoot/
+
+ENTRYPOINT ["/bin/bash", "-c", "sleep 5000"]

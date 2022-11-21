@@ -1,0 +1,29 @@
+# substitutions:
+# device  - device name
+# port    - serial port on IOC
+################################################################################
+
+################################
+######## OUTPUT RECORDS ########
+################################
+
+record(bo, "$(device):TEST") {
+    field(DESC, "PLC Test record")
+    field(DTYP, "stream")
+    field(OUT,  "@micro820.proto test $(port)")
+    field(ZNAM, "False")
+    field(ONAM, "True")
+}
+
+###############################
+######## INPUT RECORDS ########
+###############################
+
+record(bi, "$(device):TEST-RB") {
+    field(DESC, "Read the PLC Test variable")
+    field(DTYP, "stream")
+    field(INP, "@micro820.proto test $(port)")
+    field(ZNAM, "Off")
+    field(ONAM, "On")
+    field(SCAN, "1 second")
+}

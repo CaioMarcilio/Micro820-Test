@@ -1,0 +1,5 @@
+OutTerminator = CR;
+InTerminator  = CR;
+ReplyTimeout  = 600;
+
+test    { out "TEST";   in "%d"}
