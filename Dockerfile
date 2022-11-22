@@ -26,10 +26,10 @@ WORKDIR /opt
 RUN apt-get update && apt-get -y install build-essential libreadline-gplv2-dev && \
     mkdir /opt/epics-R3.15.9 && \
     cd /opt/epics-R3.15.9 && \
-    wget --no-check-certificate https://epics-controls.org/download/base/base-3.15.6.tar.gz && \
+    wget --no-check-certificate https://epics-controls.org/download/base/base-3.15.9.tar.gz && \
     tar -xzvf base-3.15.9.tar.gz && \
     rm -rf base-3.15.9.tar.gz && \
-    mv base-3.15.6 base && \
+    mv base-3.15.9 base && \
     mkdir modules && \
     cd base && \
     make -j$(nproc)
@@ -53,7 +53,7 @@ RUN cd .. && \
     make -j$(nproc)
 
 COPY ./ioc/ /root/ioc-micro820/
-COPY ./entrypoint.sh /root/ioc-micro820/iocBoot/
+# COPY ./entrypoint.sh /root/ioc-micro820/iocBoot/
 
 WORKDIR /root/ioc-micro820/iocBoot/
 
