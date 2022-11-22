@@ -1,7 +1,7 @@
-#!/opt/epics-R3.15.6/modules/StreamDevice-2.8.16/bin/linux-x86_64/streamApp
+#!/opt/epics-R3.15.9/modules/StreamDevice-2.8.16/bin/linux-x86_64/streamApp
 
 epicsEnvSet("STREAMDEVICE",         "/opt/epics-R3.15.9/modules/StreamDevice-2.8.16 ")
-epicsEnvSet("IOC",                  "/root/ioc-micro820test"                   )
+epicsEnvSet("IOC",                  "/root/ioc-micro820"                   )
 epicsEnvSet("STREAM_PROTOCOL_PATH", "$(IOC)/protocol"                               )
 
 epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "1048576")
@@ -15,7 +15,7 @@ drvAsynIPPortConfigure ("CH1", "10.0.28.xx:xxxx")
 
 cd ${IOC}
 
-dbLoadRecords("database/st.db", "device = Micro820PLC, port = CH1")
+dbLoadRecords("database/micro820.db", "device = Micro820PLC, port = CH1")
 
 cd iocBoot
 iocInit
