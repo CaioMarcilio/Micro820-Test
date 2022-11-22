@@ -35,7 +35,7 @@ RUN apt-get update && apt-get -y install build-essential libreadline-gplv2-dev &
     make -j$(nproc)
 
 # --- ASYN Driver ---
-RUN cd {EPICS_MODULES} && \
+RUN cd ${EPICS_MODULES} && \
     wget --no-check-certificate https://www.aps.anl.gov/epics/download/modules/asyn4-35.tar.gz && \
     tar -xvzf asyn4-35.tar.gz && \
     rm -rf asyn4-35.tar.gz && \
@@ -44,7 +44,7 @@ RUN cd {EPICS_MODULES} && \
     make -j$(nproc)
 
 # --- Stream Device ---
-RUN cd {EPICS_MODULES} && \
+RUN cd ${EPICS_MODULES} && \
     wget --no-check-certificate https://github.com/paulscherrerinstitute/StreamDevice/archive/2.8.16.tar.gz && \
     tar -zxvf 2.8.16.tar.gz && \
     rm -rf 2.8.16.tar.gz && \
