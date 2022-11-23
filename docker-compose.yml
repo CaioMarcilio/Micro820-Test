@@ -1,6 +1,15 @@
 version: "3.7"
+x-default-labels: &default-labels
+  org.opencontainers.image.authors: ${AUTHOR}
+  org.opencontainers.image.source: ${REPOSITORY}
+  org.opencontainers.image.url: ${REPOSITORY}
+  org.opencontainers.image.vendor: ${VENDOR}
+
 services:
-  micro820test:
+  ioc:
+    image: Micro820Test
     build:
       context: "."
       dockerfile: Dockerfile
+      labels:
+        <<: *default-labels
