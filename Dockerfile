@@ -26,16 +26,16 @@ WORKDIR /opt
 RUN apt-get update && apt-get -y install build-essential libreadline-gplv2-dev && \
     mkdir /opt/epics-R3.15.9 && \
     cd /opt/epics-R3.15.9 && \
-    wget --no-check-certificate https://epics-controls.org/download/base/base-3.15.6.tar.gz && \
+    wget --no-check-certificate https://epics-controls.org/download/base/base-3.15.9.tar.gz && \
     tar -xzvf base-3.15.9.tar.gz && \
     rm -rf base-3.15.9.tar.gz && \
-    mv base-3.15.6 base && \
+    mv base-3.15.9 base && \
     mkdir modules && \
     cd base && \
     make -j$(nproc)
 
 # --- ASYN Driver ---
-RUN cd ../modules/ && \
+RUN cd ${EPICS_MODULES} && \
     wget --no-check-certificate https://www.aps.anl.gov/epics/download/modules/asyn4-35.tar.gz && \
     tar -xvzf asyn4-35.tar.gz && \
     rm -rf asyn4-35.tar.gz && \
@@ -44,7 +44,7 @@ RUN cd ../modules/ && \
     make -j$(nproc)
 
 # --- Stream Device ---
-RUN cd .. && \
+RUN cd ${EPICS_MODULES} && \
     wget --no-check-certificate https://github.com/paulscherrerinstitute/StreamDevice/archive/2.8.16.tar.gz && \
     tar -zxvf 2.8.16.tar.gz && \
     rm -rf 2.8.16.tar.gz && \
@@ -53,7 +53,7 @@ RUN cd .. && \
     make -j$(nproc)
 
 COPY ./ioc/ /root/ioc-micro820/
-COPY ./entrypoint.sh /root/ioc-micro820/iocBoot/
+# COPY ./entrypoint.sh /root/ioc-micro820/iocBoot/
 
 WORKDIR /root/ioc-micro820/iocBoot/
 
